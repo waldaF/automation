@@ -4,10 +4,10 @@
        annotations="JDK"
        verbose="1"
        parallel="classes"
-       thread-count="1"
-       data-provider-thread-count="1"
+       thread-count="2"
+       data-provider-thread-count="3"
 >
-    <test name="Eshop" parallel="methods" thread-count="1">
+    <test name="Eshop" parallel="methods" thread-count="2">
         <classes>
             <class name="com.at.ui.EshopIT"/>
         </classes>

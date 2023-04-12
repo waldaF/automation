@@ -1,7 +1,7 @@
 package com.at.client.selenium;
 
 import com.at.client.selenium.dto.ByAttribute;
-import com.at.client.selenium.error.SeleniumUriException;
+import com.at.exception.SeleniumUriException;
 import com.at.client.selenium.vo.ClickVo;
 import com.at.client.selenium.vo.ElementVo;
 import com.at.client.selenium.vo.FrameVo;
@@ -11,6 +11,7 @@ import com.at.provider.ThreadProvider;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -50,6 +51,11 @@ public class SeleniumClient {
 		this.driver = driverInit();
 	}
 
+	public void clickEnter(final ByAttribute field) {
+		var element = findBy(field);
+		element.sendKeys(Keys.ENTER);
+	}
+
 	public void maximizeSize() {
 		driver.manage().window().maximize();
 	}
@@ -73,6 +79,11 @@ public class SeleniumClient {
 	public void fillIn(final ByAttribute field, final String value) {
 		var element = findBy(field);
 		element.sendKeys(value);
+	}
+
+	public List<WebElement> findElementsBy(final ByAttribute byAttribute) {
+		retryIsEnabled(byAttribute);
+		return driver.findElements(byAttribute.get());
 	}
 
 	public void clickAndFillIn(final ByAttribute field, final String value) {

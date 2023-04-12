@@ -4,11 +4,19 @@ package com.at.ui;
 import com.at.client.selenium.SeleniumClient;
 import com.at.client.selenium.SeleniumWrapper;
 import com.at.client.selenium.dto.ProductDto;
+import com.at.client.selenium.dto.response.ProductListResponse;
 import com.at.client.selenium.po.EshopHomePo;
+import com.at.data.UIDataProvider;
+import com.at.exception.SeleniumTestFailedException;
 import com.at.listener.TestNgListener;
 import com.at.provider.ExtentReporterProvider;
 import com.at.provider.KeyProvider;
+import com.at.utils.DeserializationUtils;
+import com.at.utils.SerializationUtils;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -18,16 +26,65 @@ import org.testng.annotations.Test;
 @Listeners({TestNgListener.class})
 public class EshopIT {
 
-	@Test
-	public void search() {
+	@Test(
+			dataProvider = "searchProducts",
+			dataProviderClass = UIDataProvider.class,
+			description = "Separate UI test for search products compare results against dataset"
+	)
+	public void search(final String searchBy, final int expectedCount) {
 		final ExtentTest extentTest = ExtentReporterProvider.getTest();
+		extentTest.assignCategory("UI");
+		extentTest.info("Search by " + searchBy);
 		var url = KeyProvider.loadProperty("com.at.ui.eshop.url");
-		extentTest.info("Starting UI test for url " + url);
-		var localhost = Boolean.getBoolean(KeyProvider.loadProperty("com.at.ui.eshop.localhost"));
-		var seleniumClient = SeleniumClient.createClient(true);
-		var productDto = new ProductDto("faDeD");
+		var localhost = Boolean.parseBoolean(KeyProvider.loadProperty("com.at.ui.eshop.localhost"));
+		var seleniumClient = SeleniumClient.createClient(localhost);
+		var productDto = new ProductDto(searchBy);
 		final EshopHomePo home = new EshopHomePo(seleniumClient, productDto, url);
-		SeleniumWrapper.ui(extentTest, home);
+
+		var data = SeleniumWrapper.ui(extentTest, home).orElseThrow(() -> new SeleniumTestFailedException("Product not found"));
+		var jsonData = SerializationUtils.serialize(data);
+		extentTest.info(MarkupHelper.createLabel("Product from server", ExtentColor.BLUE));
+		extentTest.info(MarkupHelper.createCodeBlock(jsonData, CodeLanguage.JSON));
+
+		final ProductListResponse actualProducts = DeserializationUtils.deserialize(jsonData, ProductListResponse.class);
+		validate(extentTest, actualProducts.products().size(), expectedCount);
 	}
 
+	@Test(
+			dataProvider = "searchProducts",
+			dataProviderClass = UIDataProvider.class,
+			description = "Separate UI test which check that search does not find product."
+	)
+	public void searchNotFound(final String searchBy, final int expectedCount) {
+		final ExtentTest extentTest = ExtentReporterProvider.getTest();
+		extentTest.assignCategory("UI");
+		extentTest.info("Product " + searchBy + "not found");
+	}
+
+	@Test
+	public void signIn() {
+		final ExtentTest extentTest = ExtentReporterProvider.getTest();
+	}
+
+	@Test
+	public void purchaseNoSignIn() {
+		final ExtentTest extentTest = ExtentReporterProvider.getTest();
+	}
+
+	@Test
+	public void purchaseWithExistingAccount() {
+		final ExtentTest extentTest = ExtentReporterProvider.getTest();
+	}
+
+	private void validate(final ExtentTest extentTest, final int actualSize, final int expectedSize) {
+		if (actualSize == expectedSize) {
+			extentTest.info("Product count corresponds");
+		}
+		if (actualSize != expectedSize) {
+			var errMessage = String.format("Validation failed expected %s but found %s products",
+					expectedSize,
+					actualSize);
+			extentTest.fail(errMessage);
+		}
+	}
 }

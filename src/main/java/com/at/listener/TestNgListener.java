@@ -14,7 +14,6 @@ import org.testng.xml.XmlSuite;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TestNgListener implements ITestListener, ISuiteListener, IReporter, IInvokedMethodListener {
@@ -27,9 +26,7 @@ public class TestNgListener implements ITestListener, ISuiteListener, IReporter,
 	}
 
 	/**
-	 * TODO SOLVE DATA PROVIDER FOR SAME METHOD == tst child
-	 *
-	 * @param result
+	 * For data provider same testMethod is added as child
 	 */
 	@Override
 	public void onTestStart(ITestResult result) {
@@ -38,14 +35,16 @@ public class TestNgListener implements ITestListener, ISuiteListener, IReporter,
 		final String description = method.getDescription();
 		final String methodName = method.getMethodName();
 		final String key = String.format("%s.%s", className, methodName);
-		final String classNameDescription = className + "<br>";
-		final String wholeDescription = StringUtils.isEmpty(description)
-				? classNameDescription
-				: classNameDescription + description;
-		final ExtentTest extentTestFather = ExtentReporterProvider.createTest(methodName, wholeDescription, result.getTestContext().getSuite().getName());
-		if (Objects.nonNull(mutex.get(key))) {
-			throw new IllegalArgumentException("Same method with dataset not supported yet - child test!");
+
+		if (mutex.containsKey(key)) {
+			final ExtentTest parentTest = mutex.get(key);
+			ExtentReporterProvider.createNodeTest(parentTest);
 		} else {
+			final String classNameDescription = className + "<br>";
+			final String wholeDescription = StringUtils.isEmpty(description)
+					? classNameDescription
+					: classNameDescription + description;
+			final ExtentTest extentTestFather = ExtentReporterProvider.createTest(methodName, wholeDescription, result.getTestContext().getSuite().getName());
 			mutex.put(key, extentTestFather);
 		}
 	}

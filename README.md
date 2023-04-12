@@ -19,6 +19,13 @@ Add ATLocalHost to testNG template so you will be able to automatically execute 
 
 ![img.png](assets/testNGTemplate2.png)
 
+When you run test via maven command test with dataset will be market as child see picture bellow:
+
+![MavenRun.png](assets%2FMavenRun.png)
+
+When you executed test via TestNG child logic will be not affected:
+![runViaTestNG.png](assets%2FrunViaTestNG.png)
+
 # 🛠 Technologies
 - Maven
 - Git
