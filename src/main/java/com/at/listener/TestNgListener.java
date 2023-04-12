@@ -1,5 +1,6 @@
 package com.at.listener;
 
+import com.at.mutex.MutexMap;
 import com.at.provider.ExtentReporterProvider;
 import com.at.utils.StringUtils;
 import com.aventstack.extentreports.ExtentTest;
@@ -13,12 +14,10 @@ import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TestNgListener implements ITestListener, ISuiteListener, IReporter, IInvokedMethodListener {
 
-	private static final Map<String, ExtentTest> mutex = new ConcurrentHashMap<>();
+	private static final MutexMap<String, ExtentTest> mutex = new MutexMap<>();
 
 	@Override
 	public void generateReport(List<XmlSuite> list, List<ISuite> list1, String s) {
