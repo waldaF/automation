@@ -1,4 +1,4 @@
-package com.at;
+package com.at.utils;
 
 import lombok.experimental.UtilityClass;
 
