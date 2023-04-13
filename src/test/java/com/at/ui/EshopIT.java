@@ -1,6 +1,7 @@
 package com.at.ui;
 
 
+import com.at.GenericIT;
 import com.at.client.selenium.SeleniumClient;
 import com.at.client.selenium.SeleniumWrapper;
 import com.at.client.selenium.dto.ProductDto;
@@ -8,7 +9,6 @@ import com.at.client.selenium.dto.response.ProductListResponse;
 import com.at.client.selenium.po.EshopHomePo;
 import com.at.data.UIDataProvider;
 import com.at.exception.SeleniumTestFailedException;
-import com.at.listener.TestNgListener;
 import com.at.provider.ExtentReporterProvider;
 import com.at.provider.KeyProvider;
 import com.at.utils.DeserializationUtils;
@@ -17,23 +17,20 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 /**
  * Test NG naming  want to have IT even thought it is E2E (real DB etc no Mock, H2 ...)
  */
-@Listeners({TestNgListener.class})
-public class EshopIT {
+public class EshopIT extends GenericIT {
 
 	@Test(
 			dataProvider = "searchProducts",
 			dataProviderClass = UIDataProvider.class,
 			description = "Separate UI test for search products compare results against dataset"
 	)
-	public void search(final String searchBy, final int expectedCount) {
+	public void searchUI(final String searchBy, final int expectedCount) {
 		final ExtentTest extentTest = ExtentReporterProvider.getTest();
-		extentTest.assignCategory("UI");
 		extentTest.info("Search by " + searchBy);
 		var url = KeyProvider.loadProperty("com.at.ui.eshop.url");
 		var localhost = Boolean.parseBoolean(KeyProvider.loadProperty("com.at.ui.eshop.localhost"));
@@ -57,7 +54,6 @@ public class EshopIT {
 	)
 	public void searchNotFound(final String searchBy, final int expectedCount) {
 		final ExtentTest extentTest = ExtentReporterProvider.getTest();
-		extentTest.assignCategory("UI");
 		extentTest.info("Product " + searchBy + "not found");
 	}
 

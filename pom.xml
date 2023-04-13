@@ -20,7 +20,7 @@
         <selenium.webdriver.version>5.3.2</selenium.webdriver.version>
         <extentreports.version>5.0.9</extentreports.version>
         <testng.version>7.7.0</testng.version>
-        <suites>src/test/resources/suites/REST.xml</suites>
+        <suites>src/test/resources/suites/EshopE2E.xml</suites>
         <suites.thread.count>1</suites.thread.count>
     </properties>
 

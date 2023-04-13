@@ -26,6 +26,11 @@ When you run test via maven command test with dataset will be market as child se
 When you executed test via TestNG child logic will be not affected:
 ![runViaTestNG.png](assets%2FrunViaTestNG.png)
 
+
+EXAMPLE
+There is result from e2e tests which is combination UI (selenium) and REST API (dummy) data obtained in UI are validated against data from backend
+![img.png](assets/example.png)
+
 # 🛠 Technologies
 - Maven
 - Git

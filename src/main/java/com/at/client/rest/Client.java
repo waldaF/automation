@@ -5,6 +5,7 @@ import com.at.client.selenium.dto.ProductDto;
 import com.at.client.selenium.dto.response.ProductListResponse;
 import com.at.utils.DeserializationUtils;
 import com.at.utils.SerializationUtils;
+import com.aventstack.extentreports.ExtentTest;
 
 import java.time.Duration;
 import java.util.List;
@@ -29,7 +30,8 @@ public class Client {
 
 	private String url;
 
-	public ResponseVo httpDummyGet() {
+	public ResponseVo httpDummyGet(ExtentTest extentTest) {
+		extentTest.info("GET: https://eshop-core-dev01.svc.com");
 		return ResponseVo.builder()
 				.requestJson("")
 				.duration(Duration.ofMillis(RANDOM.nextInt(600)))
