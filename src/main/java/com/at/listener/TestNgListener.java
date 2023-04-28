@@ -4,6 +4,8 @@ import com.at.mutex.MutexMap;
 import com.at.provider.ExtentReporterProvider;
 import com.at.utils.StringUtils;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.IReporter;
 import org.testng.ISuite;
@@ -46,5 +48,28 @@ public class TestNgListener implements ITestListener, ISuiteListener, IReporter,
 			final ExtentTest extentTestFather = ExtentReporterProvider.createTest(methodName, wholeDescription, result.getTestContext().getSuite().getName());
 			mutex.put(key, extentTestFather);
 		}
+	}
+
+	@Override
+	public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+		Status status = ExtentReporterProvider.getTest().getStatus();
+		if (status != null && status != Status.PASS) {
+			testResult.setStatus(2);
+		}
+	}
+
+	@Override
+	public void onTestSuccess(ITestResult result) {
+		ExtentReporterProvider.getTest().pass("Test complete");
+	}
+
+	@Override
+	public void onTestFailure(ITestResult result) {
+		ExtentReporterProvider.getTest().fail("Test failed");
+	}
+
+	@Override
+	public void onTestSkipped(ITestResult result) {
+		ExtentReporterProvider.getTest().skip("Test skipped");
 	}
 }

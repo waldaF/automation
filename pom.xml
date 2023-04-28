@@ -19,7 +19,7 @@
         <selenium.java.version>4.8.3</selenium.java.version>
         <selenium.webdriver.version>5.3.2</selenium.webdriver.version>
         <extentreports.version>5.0.9</extentreports.version>
-        <testng.version>7.7.0</testng.version>
+        <testng.version>7.7.1</testng.version>
         <suites>src/test/resources/suites/EshopE2E.xml</suites>
         <suites.thread.count>1</suites.thread.count>
     </properties>
@@ -75,23 +75,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>3.0.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M7</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-testng</artifactId>
-                        <version>3.0.0-M7</version>
-                    </dependency>
-                </dependencies>
+                <version>2.22.2</version>
                 <configuration>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
                     <systemPropertiesFile>${failsafe.properties}</systemPropertiesFile>
-                    <goal>integration-test</goal>
-                    <goal>verify</goal>
                     <properties>
                         <property>
                             <name>suitethreadpoolsize</name>
@@ -104,7 +96,6 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>integration-test</phase>
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
