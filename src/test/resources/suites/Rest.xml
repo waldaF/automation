@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="REST"
+       annotations="JDK"
+       verbose="1"
+       parallel="classes"
+       thread-count="1"
+       data-provider-thread-count="10"
+>
+    <test name="EshopCore" parallel="methods" thread-count="3">
+        <classes>
+            <class name="com.at.rest.EshopCoreIT"/>
+        </classes>
+    </test>
+</suite>

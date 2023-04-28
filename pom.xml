@@ -10,11 +10,18 @@
     <packaging>jar</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <unit5.version>5.9.0</unit5.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <unit5.version>5.9.2</unit5.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <lombok.version>1.18.24</lombok.version>
+        <selenium.java.version>4.8.3</selenium.java.version>
+        <selenium.webdriver.version>5.3.2</selenium.webdriver.version>
+        <extentreports.version>5.0.9</extentreports.version>
+        <testng.version>7.7.1</testng.version>
+        <suites>src/test/resources/suites/EshopE2E.xml</suites>
+        <suites.thread.count>1</suites.thread.count>
     </properties>
 
     <dependencies>
@@ -34,6 +41,32 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-http-jdk-client</artifactId>
+            <version>${selenium.java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${selenium.webdriver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extentreports.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
     </dependencies>
 
 
@@ -42,7 +75,33 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>3.0.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <systemPropertiesFile>${failsafe.properties}</systemPropertiesFile>
+                    <properties>
+                        <property>
+                            <name>suitethreadpoolsize</name>
+                            <value>${failsafe.suiteThreadCount}</value>
+                        </property>
+                    </properties>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${failsafe.suites}</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,4 +113,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <failsafe.suiteThreadCount>${suites.thread.count}</failsafe.suiteThreadCount>
+                <failsafe.suites>${suites}</failsafe.suites>
+                <failsafe.properties>${project.basedir}/src/test/resources/local.properties</failsafe.properties>
+            </properties>
+        </profile>
+    </profiles>
 </project>
