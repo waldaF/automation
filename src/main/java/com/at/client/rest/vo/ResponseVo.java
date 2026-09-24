@@ -13,5 +13,6 @@ public class ResponseVo {
 	private String requestJson;
 	private Duration duration;
 	private String responseJson;
+	private int statusCode;
 
 }

@@ -1,0 +1,14 @@
+.git
+.gitignore
+.idea
+*.iml
+
+target
+*.log
+ExtentReportResults.html
+
+README.md
+LICENSE
+assets
+
+src/test/resources/*.properties

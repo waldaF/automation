@@ -53,5 +53,7 @@ apex-scripts/*
 .idea
 target
 /*.properties
+src/test/resources/*.properties
+ExtentReportResults.html
 nbactions.xml
 /*.jks

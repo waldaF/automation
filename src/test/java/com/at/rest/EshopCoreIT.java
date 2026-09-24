@@ -6,11 +6,10 @@ import com.at.client.rest.vo.ResponseVo;
 import com.at.client.selenium.dto.response.ProductListResponse;
 import com.at.data.RestApiDataProvider;
 import com.at.provider.ExtentReporterProvider;
+import com.at.provider.ExtentReporterUtils;
 import com.at.utils.DeserializationUtils;
 import com.at.validator.ProductValidator;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 import org.testng.annotations.Test;
 
 public class EshopCoreIT extends GenericIT {
@@ -25,7 +24,7 @@ public class EshopCoreIT extends GenericIT {
 		final ResponseVo responseVo = new Client().httpDummyGet(extentTest);
 		final ProductListResponse serverResponse = DeserializationUtils.deserialize(
 				responseVo.getResponseJson(), ProductListResponse.class);
-		extentTest.info(MarkupHelper.createLabel("duration: " + responseVo.getDuration().toMillis(), ExtentColor.BLUE));
+		ExtentReporterUtils.logDuration(extentTest, responseVo.getDuration());
 		ProductValidator.validate(extentTest, serverResponse, expectedResponse);
 	}
 
