@@ -3,24 +3,64 @@ This repository is practical shown for `Rest API` and `UI` tests with `HTML` res
 There is also shown combination of `UI` and `REST API` test as one isolated test.
 All execution is easily done with mvn command:
 
-- Isolated REST API test (teamcity step after separated app is deployed)
+- Isolated REST API test (teamcity step after separated app is deployed) per environment
    ```bash
-   mvn clean verify -P local -Dfailsafe.suites=src/test/resources/suites/Rest.xml
+   mvn clean verify -P dev -Dfailsafe.suites=src/test/resources/suites/Rest.xml
+   ```
+- Isolated Petstore REST API test, its own suite, per environment (suites can differ per environment — e.g.
+  `PetstoreStg.xml` could include extra staging-only classes; for now it mirrors `Petstore.xml`)
+   ```bash
+   mvn clean verify -P dev -Dfailsafe.suites=src/test/resources/suites/Petstore.xml
+   mvn clean verify -P stg -Dfailsafe.suites=src/test/resources/suites/PetstoreStg.xml
+   mvn clean verify -P prod -Dfailsafe.suites=src/test/resources/suites/Petstore.xml
    ```
 - Isolated UI test (teamcity step after separated app is deployed)
    ```bash
-   mvn clean verify -P local -Dfailsafe.suites=src/test/resources/suites/Ui.xml
+   mvn clean verify -P dev -Dfailsafe.suites=src/test/resources/suites/Ui.xml
    ```
 - Isolated System Integration E2E test between UI and CORE (should be executed manually when both systems are deployed)
   ```bash
-  mvn clean verify -P local -Dfailsafe.suites=src/test/resources/suites/EshopE2E.xml
+  mvn clean verify -P dev -Dfailsafe.suites=src/test/resources/suites/EshopE2E.xml
   ```
 That is shown how it could be easily executed for teamcity/jenkins plan. Before suites are executed by `failsafe plugin`
 all unit tests run as first by `surfire` plugin. If some unit test fail E2E tests defined in xml suites will be not executed.
 
+## Docker
+
+Build once, run many times against different environments/suites — properties files hold config, not secrets, but are
+never baked into the image (`src/test/resources/*.properties` is in `.dockerignore`).
+
+This just (create → run tests → exit) - normally it would store reporting.html and logs to storage like GCP, Exoscale what ever.
+```bash
+docker build -t at-core:1.0.0 .
+
+# dev, Rest suite
+docker run -v "$(pwd)/src/test/resources/dev.properties:/app/config.properties" at-core:1.0.0 \
+  -Dfailsafe.properties=/app/config.properties -Dfailsafe.suites=src/test/resources/suites/Rest.xml
+
+# stg, UI suite
+docker run -v "$(pwd)/src/test/resources/stg.properties:/app/config.properties" at-core:1.0.0 \
+  -Dfailsafe.properties=/app/config.properties -Dfailsafe.suites=src/test/resources/suites/Ui.xml
+
+# stg, Petstore suite
+docker run -v "$(pwd)/src/test/resources/stg.properties:/app/config.properties" at-core:1.0.0 \
+  -Dfailsafe.properties=/app/config.properties -Dfailsafe.suites=src/test/resources/suites/PetstoreStg.xml
+
+# prod, Petstore suite
+docker run -v "$(pwd)/src/test/resources/prod.properties:/app/config.properties" at-core:1.0.0 \
+  -Dfailsafe.properties=/app/config.properties -Dfailsafe.suites=src/test/resources/suites/Petstore.xml
+```
+
+## Environments
+
+Tests can be limited to certain environments. `createPet`/`deletePet` are tagged to only run against
+`dev`/`stg`.
+Read-only tests (like `getPets`) are tagged to always run everywhere. Untagged tests just always run, regardless of
+environment.
+
 ## Execute
 
-1. Create local.properties and add into src/test/resources
+1. Create dev.properties and add into src/test/resources
    com.at.ui.eshop.url=http://automationpractice.pl/index.php
 2. ```mvn test ``` - unit test
 

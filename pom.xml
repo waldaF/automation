@@ -116,14 +116,30 @@
 
     <profiles>
         <profile>
-            <id>local</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <failsafe.suiteThreadCount>${suites.thread.count}</failsafe.suiteThreadCount>
                 <failsafe.suites>${suites}</failsafe.suites>
-                <failsafe.properties>${project.basedir}/src/test/resources/local.properties</failsafe.properties>
+                <failsafe.properties>${project.basedir}/src/test/resources/dev.properties</failsafe.properties>
+            </properties>
+        </profile>
+        <profile>
+            <id>stg</id>
+            <properties>
+                <failsafe.suiteThreadCount>${suites.thread.count}</failsafe.suiteThreadCount>
+                <failsafe.suites>${suites}</failsafe.suites>
+                <failsafe.properties>${project.basedir}/src/test/resources/stg.properties</failsafe.properties>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <failsafe.suiteThreadCount>${suites.thread.count}</failsafe.suiteThreadCount>
+                <failsafe.suites>${suites}</failsafe.suites>
+                <failsafe.properties>${project.basedir}/src/test/resources/prod.properties</failsafe.properties>
             </properties>
         </profile>
     </profiles>

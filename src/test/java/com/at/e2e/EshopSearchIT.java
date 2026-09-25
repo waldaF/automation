@@ -11,6 +11,7 @@ import com.at.client.selenium.po.EshopHomePo;
 import com.at.data.E2EDataProvider;
 import com.at.exception.SeleniumTestFailedException;
 import com.at.provider.ExtentReporterProvider;
+import com.at.provider.ExtentReporterUtils;
 import com.at.provider.KeyProvider;
 import com.at.utils.DeserializationUtils;
 import com.at.utils.SerializationUtils;
@@ -48,7 +49,7 @@ public class EshopSearchIT extends GenericIT {
 		final ResponseVo responseVo = new Client().httpDummyGet(extentTest);
 		final ProductListResponse productsBackend = DeserializationUtils.deserialize(
 				responseVo.getResponseJson(), ProductListResponse.class);
-		extentTest.info(MarkupHelper.createLabel("duration: " + responseVo.getDuration().toMillis(), ExtentColor.BLUE));
+		ExtentReporterUtils.logDuration(extentTest, responseVo.getDuration());
 
 		ProductValidator.validate(extentTest, productsUi, productsBackend);
 	}
